@@ -1,0 +1,16 @@
+# Active configuration — routes and dates are safe to commit.
+# Credentials stay in GitHub Secrets only (remote execution).
+# Set configured: true after adding your routes (see config/travel.example.yaml).
+
+configured: false
+search_mode: fixed
+
+message_title: "Vacation is coming — flight alert"
+
+schedule:
+  timezone: America/Sao_Paulo
+  hour: 8
+  minute: 0
+  # interval_days: 3   # optional — skip SerpAPI runs until N days after last snapshot
+
+routes: []

@@ -1,0 +1,36 @@
+# Starter configuration. Copy its structure into travel.yaml when needed.
+# IATA codes: https://www.iata.org/en/publications/directories/code-search/
+
+configured: true
+search_mode: fixed   # fixed | explore | range (explore/range require SerpAPI)
+
+message_title: "Vacation is coming — flight alert"
+
+schedule:
+  timezone: America/New_York
+  hour: 8
+  minute: 0
+  # interval_days: 3   # optional — skip runs until N days after last snapshot
+
+# Used when search_mode: range (google_flights per departure day — max 10-day window)
+# range:
+#   departure_window_start: "2027-02-05"
+#   departure_window_end: "2027-02-14"
+#   trip_duration_days: 7
+#   top_combinations: 3
+
+# Used when search_mode: explore (google_travel_explore — ~6 month horizon)
+# explore:
+#   month: 3              # 1-12
+#   travel_duration: 2    # 1=weekend, 2=1 week, 3=2 weeks
+#   deepen: true          # false = explore only; true = also google_flights top offers
+
+routes:
+  - name: "New York → Miami"
+    origin: JFK
+    destination: MIA
+    departure_date: "2027-03-10"
+    return_date: "2027-03-17"
+    adults: 1
+    currency: USD
+    max_results: 5

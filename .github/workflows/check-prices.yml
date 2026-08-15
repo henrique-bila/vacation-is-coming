@@ -1,0 +1,56 @@
+name: Check flight prices and notify on WhatsApp
+
+on:
+  schedule:
+    # Cron is generated from config schedule (local tz → UTC). Run: python -m src --sync-schedule
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r config/requirements.txt
+
+      - name: Search and send WhatsApp
+        env:
+          FLIGHT_PROVIDER: ${{ secrets.FLIGHT_PROVIDER }}
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+          AMADEUS_CLIENT_ID: ${{ secrets.AMADEUS_CLIENT_ID }}
+          AMADEUS_CLIENT_SECRET: ${{ secrets.AMADEUS_CLIENT_SECRET }}
+          AMADEUS_ENV: ${{ secrets.AMADEUS_ENV }}
+          WHATSAPP_PROVIDER: ${{ secrets.WHATSAPP_PROVIDER }}
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_FROM: ${{ secrets.TWILIO_WHATSAPP_FROM }}
+          TWILIO_WHATSAPP_TO: ${{ secrets.TWILIO_WHATSAPP_TO }}
+          PRICE_ALERT_MAX: ${{ secrets.PRICE_ALERT_MAX }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python -m src --force
+          else
+            python -m src
+          fi
+
+      - name: Commit price snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add config/snapshots/
+          git diff --staged --quiet || git commit -m "chore: flight price snapshot $(date -u +%Y-%m-%d)"
+          git push

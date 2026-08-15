@@ -1,0 +1,13 @@
+# Git publish target for the vacation-is-coming agent.
+# Copy to config/repo.yaml and set configured: true after onboarding.
+
+configured: false
+
+# HTTPS or SSH URL of the user's fork (not secrets)
+remote_url: "https://github.com/YOUR_USER/vacation-is-coming.git"
+
+# Branch to push (usually main)
+branch: main
+
+# Optional: display name for chat confirmations
+remote_name: origin

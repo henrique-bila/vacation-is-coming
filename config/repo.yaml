@@ -1,0 +1,7 @@
+# Git publish target — safe to commit (no credentials).
+# Set configured: true after creating your GitHub repository.
+
+configured: false
+remote_url: "https://github.com/YOUR_USER/vacation-is-coming.git"
+branch: main
+remote_name: origin
