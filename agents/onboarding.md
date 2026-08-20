@@ -15,7 +15,7 @@ Use this when a new user clones vacation-is-coming and needs to get alerts worki
 3. **Configuration** — `config/travel.yaml` starts with `configured: false`.
    Ask for the user's origin, destinations, **date mode** (`fixed`, `explore`, or `range`), travel dates or window/duration/top-N, passengers, currency,
    alert time, timezone, and optional `interval_days` for SerpAPI quota. Set `configured: true` only after writing their
-   choices. Full human guide: [`docs/GUIA_REPASSE.md`](../docs/GUIA_REPASSE.md).
+   choices. Full human guide: [`docs/GUIA_USUARIO.md`](../docs/GUIA_USUARIO.md).
    ```bash
    cp config/.env.example config/.env
    ```

@@ -1,15 +1,13 @@
-﻿# Guia completo de repasse — vacation-is-coming
+# Guia do usuário — vacation-is-coming
 
-Este documento explica **como passar o projeto vacation-is-coming para outra pessoa** que vai começar do zero: o que é, o que precisa, como instalar, configurar, automatizar e manter.
-
-Use este guia se você vai **transferir o repositório**, **fazer um fork para alguém**, ou **onboardar um amigo/familiar** no monitoramento de passagens.
+Como configurar o monitor de preços de passagens: do zero até o alerta no WhatsApp.
 
 ---
 
 ## Índice
 
 1. [O que é este projeto](#1-o-que-é-este-projeto)
-2. [O que a pessoa precisa ter antes de começar](#2-o-que-a-pessoa-precisa-ter-antes-de-começar)
+2. [O que você precisa](#2-o-que-você-precisa)
 3. [Visão geral: como tudo se conecta](#3-visão-geral-como-tudo-se-conecta)
 4. [Passo a passo — do zero ao alerta no WhatsApp](#4-passo-a-passo--do-zero-ao-alerta-no-whatsapp)
 5. [Contas e chaves (SerpAPI + WhatsApp)](#5-contas-e-chaves-serpapi--whatsapp)
@@ -23,7 +21,7 @@ Use este guia se você vai **transferir o repositório**, **fazer um fork para a
 13. [O que pode ir no Git — e o que NUNCA pode](#13-o-que-pode-ir-no-git--e-o-que-nunca-pode)
 14. [Usar com agente de IA (Cursor, Claude, etc.)](#14-usar-com-agente-de-ia-cursor-claude-etc)
 15. [Troubleshooting](#15-troubleshooting)
-16. [Checklist de repasse](#16-checklist-de-repasse)
+16. [Checklist](#16-checklist)
 17. [Referência rápida de arquivos](#17-referência-rápida-de-arquivos)
 
 ---
@@ -42,11 +40,11 @@ Use este guia se você vai **transferir o repositório**, **fazer um fork para a
 
 ---
 
-## 2. O que a pessoa precisa ter antes de começar
+## 2. O que você precisa
 
 | Item | Obrigatório? | Observação |
 |------|--------------|------------|
-| Conta **GitHub** | Sim | Para fork, secrets e Actions |
+| Conta **GitHub** | Sim | Para o repo, secrets e Actions |
 | **Git** instalado | Sim (local) | `git --version` |
 | **Python 3.12+** | Sim (testes locais) | Opcional se usar só Actions |
 | Conta **SerpAPI** | Sim | Plano free: 250 buscas/mês |
@@ -112,41 +110,33 @@ Credenciais (API keys) ficam em:
 
 ### 4.1 Obter o código
 
-**Opção A — Fork (recomendado para outra pessoa)**
+**Fork (recomendado)** — assim os Secrets e o Actions ficam na sua conta:
 
-1. Abra o repositório no GitHub
-2. Clique em **Fork** → crie sob a conta dela
-3. Clone o fork:
+1. Abra [vacation-is-coming](https://github.com/henrique-bila/vacation-is-coming)
+2. Clique em **Fork**
+3. Clone o seu fork:
 
 ```bash
-git clone https://github.com/USUARIO/vacation-is-coming.git
+git clone https://github.com/SEU_USUARIO/vacation-is-coming.git
 cd vacation-is-coming
 ```
 
-**Opção B — Transferir o repositório**
-
-1. GitHub → **Settings → General → Transfer ownership**
-2. A nova pessoa aceita o transfer
-3. Ela clona normalmente
-
-**Opção C — Copiar só os arquivos**
-
-Menos ideal: perde histórico de snapshots e Actions. Prefira fork ou transfer.
+Se for só explorar o código, um clone direto também funciona. Para alertas automáticos, use o fork (ou o seu próprio repositório) com Secrets.
 
 ---
 
-### 4.2 Configurar Git na máquina da pessoa
+### 4.2 Conferir o Git
 
 ```bash
 git remote -v
 git branch
 ```
 
-Se for fork, o `origin` já aponta para o fork dela. Atualize `config/repo.yaml`:
+O `origin` deve apontar para o **seu** repositório. Atualize `config/repo.yaml`:
 
 ```yaml
 configured: true
-remote_url: "https://github.com/USUARIO/vacation-is-coming.git"
+remote_url: "https://github.com/SEU_USUARIO/vacation-is-coming.git"
 branch: main
 remote_name: origin
 ```
@@ -190,11 +180,13 @@ routes:
 
 Códigos de aeroporto (IATA): [iata.org](https://www.iata.org/en/publications/directories/code-search)
 
+Enquanto `configured` for `false`, buscas e o cron diário **não rodam** (o job termina em verde, sem gastar API).
+
 ---
 
 ### 4.5 Colocar secrets no GitHub
 
-No fork dela: **Settings → Secrets and variables → Actions → New repository secret**
+No seu repositório: **Settings → Secrets and variables → Actions → New repository secret**
 
 | Secret | Valor |
 |--------|--------|
@@ -282,8 +274,8 @@ Este é o **arquivo principal**. Pode commitar no Git (não tem senhas).
 Cada rota:
 
 ```yaml
-  - name: "Londrina → Salvador"   # nome legível
-    origin: LDB                     # aeroporto origem (IATA)
+  - name: "São Paulo → Salvador"   # nome legível
+    origin: GRU                     # aeroporto origem (IATA)
     destination: SSA                # aeroporto destino
     departure_date: "2027-02-05"    # usado em fixed; fallback nos outros modos
     return_date: "2027-02-12"
@@ -320,7 +312,7 @@ explore:
   deepen: true          # depois busca ofertas detalhadas nessa semana
 ```
 
-**Limitação:** horizonte ~**6 meses** à frente. Ex.: em agosto/2026, fev/2027 pode falhar.
+**Limitação:** horizonte ~**6 meses** à frente. Ex.: em agosto, fevereiro do ano seguinte pode falhar.
 
 **Custo:** ~1–2 buscas × rota × execução (mais se `deepen: true`).
 
@@ -328,7 +320,7 @@ explore:
 
 ### `range` — melhores dias dentro de uma janela
 
-Testa **cada dia de ida** num intervalo e traz os **N mais baratos**, com escala e duração.
+Testa **cada dia de ida** num intervalo e traz os **N mais baratos**. Cia, escalas e duração ficam no snapshot; o WhatsApp é um resumo.
 
 ```yaml
 search_mode: range
@@ -338,12 +330,6 @@ range:
   trip_duration_days: 7                 # volta = ida + 7 dias
   top_combinations: 3                   # quantos melhores dias mostrar
 ```
-
-**Exemplo de config atual (referência):**
-
-- Origens: Londrina (LDB) e Presidente Prudente (PPB)
-- Destino: Salvador (SSA)
-- Janela: 5–14 fev/2027, viagem 7 dias, top 3
 
 **Custo:** `(dias na janela) × (número de rotas)` buscas por execução.
 
@@ -387,8 +373,8 @@ Workflow: `.github/workflows/check-prices.yml`
 
 | Trigger | Comportamento |
 |---------|---------------|
-| Cron diário | Respeita `interval_days` |
-| Run workflow | Busca imediata com `--force` |
+| Cron diário | Respeita `interval_days`; se `configured: false`, sai sem buscar |
+| Run workflow | Busca imediata com `--force` (também exige `configured: true`) |
 
 O job:
 
@@ -451,7 +437,7 @@ buscas por execução = dias_janela × rotas   (modo range)
 buscas por mês ≈ buscas_por_execução × execuções_por_mês
 ```
 
-### Exemplo (config range atual)
+### Exemplo (range, 10 dias, 2 rotas)
 
 | Item | Valor |
 |------|-------|
@@ -516,34 +502,32 @@ Playbooks:
 
 | Problema | Causa provável | Solução |
 |----------|----------------|---------|
-| Actions falha todo dia | SerpAPI 400, explore fora de 6 meses | Usar `fixed` ou `range`; corrigir datas |
+| Job verde sem busca | `configured: false` | Preencher rotas e setar `configured: true` |
+| Actions falha na busca | SerpAPI 400, explore fora de 6 meses | Usar `fixed` ou `range`; corrigir datas |
 | Sem WhatsApp | Secrets errados | Conferir `CALLMEBOT_PHONE` e `CALLMEBOT_APIKEY` |
 | WhatsApp não chega | Telefone ≠ número que ativou CallMeBot | Reativar ou `Recover APIKey` no WhatsApp |
 | Job rápido, sem alerta | `interval_days` — dia de skip | Normal; ou Run workflow manual |
 | `SERPAPI_API_KEY missing` | Secret não criado | Adicionar no GitHub Secrets |
 | Cota SerpAPI esgotada | Muitas buscas | Aumentar intervalo, menos rotas, plano pago |
 | Horário errado após DST | Cron UTC desatualizado | `python -m src --sync-schedule` + push |
-| Preço "vs last" estranho | Comparando com snapshot antigo de outra config | Normal após mudar rotas/datas; estabiliza em alguns runs |
+| Preço "vs last" estranho | Snapshot antigo de outra config | Normal após mudar rotas/datas; estabiliza em alguns runs |
 
 Logs: GitHub → **Actions** → run com ❌ → expandir step **Search and send WhatsApp**.
 
 ---
 
-## 16. Checklist de repasse
+## 16. Checklist
 
-Entregue isto para a nova pessoa marcar:
-
-- [ ] Fork ou transfer do repositório feito
-- [ ] Git clone na máquina dela
+- [ ] Fork (ou clone) do repositório
 - [ ] Conta SerpAPI criada + API key
-- [ ] CallMeBot ativado no WhatsApp dela
-- [ ] Secrets configurados no GitHub (5 obrigatórios)
-- [ ] `config/travel.yaml` com rotas/datas dela + `configured: true`
-- [ ] `config/repo.yaml` com URL do fork dela
+- [ ] CallMeBot ativado no WhatsApp
+- [ ] Secrets configurados no GitHub
+- [ ] `config/travel.yaml` com suas rotas/datas + `configured: true`
+- [ ] `config/repo.yaml` com a URL do seu repositório
 - [ ] `python -m src --sync-schedule` + push do workflow
 - [ ] Run workflow manual → WhatsApp recebido
 - [ ] Snapshot apareceu em `config/snapshots/`
-- [ ] Entendeu `interval_days` e custo SerpAPI
+- [ ] Entendeu `interval_days` e o custo SerpAPI
 - [ ] Sabe que `config/.env` **nunca** vai pro Git
 
 ---
@@ -565,7 +549,7 @@ vacation-is-coming/
 ├── src/                     ← código Python
 ├── agents/                  ← guias para agentes de IA
 ├── docs/
-│   ├── GUIA_REPASSE.md      ← este arquivo
+│   ├── GUIA_USUARIO.md      ← este arquivo
 │   ├── SETUP_SERPAPI.md
 │   └── SETUP_WHATSAPP.md
 ├── AGENTS.md                ← contrato para IAs
@@ -583,7 +567,3 @@ vacation-is-coming/
 | [`docs/SETUP_WHATSAPP.md`](SETUP_WHATSAPP.md) | WhatsApp / CallMeBot |
 | [`docs/FLIGHT_PROVIDERS.md`](FLIGHT_PROVIDERS.md) | Provedores de voo |
 | [`agents/onboarding.md`](../agents/onboarding.md) | Onboarding para agentes |
-
----
-
-*Última atualização: agosto/2026 — inclui modos `fixed`, `explore`, `range`, `interval_days` e Run workflow com `--force`.*

@@ -254,7 +254,7 @@ vacation-is-coming/
 │   ├── main.py
 │   └── __main__.py
 ├── docs/
-│   ├── GUIA_REPASSE.md    # full handoff guide (Portuguese)
+│   ├── GUIA_USUARIO.md    # user guide (Portuguese)
 │   ├── SETUP_SERPAPI.md
 │   ├── SETUP_WHATSAPP.md
 │   ├── SETUP_AMADEUS.md
@@ -268,10 +268,9 @@ vacation-is-coming/
     └── check-prices.yml
 ```
 
-## Handoff / repasse (Português)
+## Guia do usuário (Português)
 
-Guia completo para passar o projeto para outra pessoa (do zero ao WhatsApp):
-[`docs/GUIA_REPASSE.md`](docs/GUIA_REPASSE.md)
+Setup do zero ao WhatsApp: [`docs/GUIA_USUARIO.md`](docs/GUIA_USUARIO.md)
 
 ## Tests
 
@@ -279,7 +278,3 @@ Guia completo para passar o projeto para outra pessoa (do zero ao WhatsApp):
 pip install -r config/requirements.txt pytest
 python -m pytest -q
 ```
-
-## Roadmap
-
-Day-by-day **itineraries** (activities, lodging ideas) are planned for a later release. See [`agents/itineraries.md`](agents/itineraries.md).

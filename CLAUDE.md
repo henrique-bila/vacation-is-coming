@@ -9,6 +9,6 @@ Playbooks:
 - [`agents/git.md`](agents/git.md)
 - [`agents/itineraries.md`](agents/itineraries.md) (phase 2 stub)
 
-Human handoff guide (Portuguese, full setup from zero): [`docs/GUIA_REPASSE.md`](docs/GUIA_REPASSE.md).
+User guide (Portuguese, full setup from zero): [`docs/GUIA_USUARIO.md`](docs/GUIA_USUARIO.md).
 
 Thin skill adapters: [`skills/README.md`](skills/README.md).
