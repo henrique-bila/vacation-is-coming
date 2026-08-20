@@ -19,7 +19,7 @@ Open-source automation that searches flight prices (SerpAPI / Google Flights) an
 
 1. You define routes, **date mode** (`fixed`, `explore`, or `range`), and a schedule in `config/travel.yaml` (or ask an AI agent to do it).
 2. GitHub Actions searches Google Flights via SerpAPI for the best offers (skips days when `interval_days` has not elapsed).
-3. It builds a **WhatsApp summary** (format depends on mode — range shows top N days with stops and duration).
+3. It builds a **WhatsApp summary** (vs last run + cheapest today). Range top-N days stay in the snapshot.
 4. It sends the message — or only when a price is under an optional `PRICE_ALERT_MAX`.
 5. It saves a **full Markdown snapshot** in `config/snapshots/` with a comparison table and top offers per route (committed by Actions).
 
@@ -191,35 +191,35 @@ DST transition.
 
 ## Example messages
 
-**WhatsApp (range mode — top 3 per route):**
+WhatsApp is a **compact summary** in every date mode (CallMeBot also turns `→`/`—` into ASCII). Airline, stops, duration, and range top-N days go in the snapshot.
+
+**WhatsApp:**
 
 ```text
-*Flight price alert — Salvador Fev/2027*
-Ida 05/02-14/02 · 7 dias · top 3
-
-*Londrina → Salvador*
-
-*1.* R$ 1.316
-   11/02 -> 18/02
-   Azul · 1 escala · 5h15
-   caiu R$ 254 vs ultima
-
-*2.* R$ 1.333
-   ...
-```
-
-**WhatsApp (fixed / explore — summary vs last run):**
-
-```text
-Flight price alert — Example trip
+Flight price alert - Example trip
 Mode: fixed dates
 
-Vs last: 1 down, 1 up, 0 flat
+Vs last: 1 down, 0 up, 0 flat
+Biggest drop: JFK -> MIA -30
+
+Top drops:
+• JFK -> MIA: 10-Mar-17-Mar · USD 420 (-30 vs last, 7d min 400)
+
 Cheapest today:
-• JFK → MIA: 10-Mar-17-Mar · USD 420 (-30 vs last)
+• JFK -> MIA: 10-Mar-17-Mar · USD 420 (-30 vs last, 7d min 400)
+
+Full history: config/snapshots/
 ```
 
-**Snapshot (full detail in repo):** comparison table + top offers per route in `config/snapshots/`.
+**Snapshot** (`config/snapshots/`):
+
+```text
+Flight price alert - Example trip
+Mode: fixed dates
+
+*JFK -> MIA* (2027-03-10 -> 2027-03-17)
+1. USD 420.00 (-30 vs last, 7d min 400) — LATAM (nonstop, 3h10m)
+```
 
 ## Project layout
 

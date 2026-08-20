@@ -112,7 +112,7 @@ def test_format_whatsapp_explore_mode_header():
     assert "Mode: explore - best week in Mar" in message
 
 
-def test_format_whatsapp_range_mode_shows_top_three_with_stops():
+def test_format_whatsapp_range_mode_uses_same_summary_as_other_modes():
     settings = _settings(
         search_mode="range",
         range=RangeSettings(
@@ -128,14 +128,12 @@ def test_format_whatsapp_range_mode_shows_top_three_with_stops():
         _offer(1600.0, route_name="LDB → SSA"),
     ]
     message = format_whatsapp_message(settings, offers, None)
-    assert "*Flight price alert — vacation-is-coming*" in message
-    assert "Ida 05/02-14/02 · 7 dias · top 3" in message
-    assert "*LDB → SSA*" in message
-    assert "*1.* USD 1,400" in message
-    assert "   10/03 -> 17/03" in message
-    assert "direto" in message
-    assert "Cheapest today:" not in message
-    assert "config/snapshots" not in message
+    assert "Mode: range - 05-Feb to 14-Feb (7d trip, top 3)" in message
+    assert "Cheapest today:" in message
+    assert "• LDB → SSA: 10-Mar-17-Mar · USD 1,400" in message
+    assert "*1.*" not in message
+    assert "caiu R$" not in message
+    assert "Full history: config/snapshots/" in message
 
 
 def test_format_whatsapp_range_mode_shows_delta_on_best():
@@ -151,7 +149,8 @@ def test_format_whatsapp_range_mode_shows_delta_on_best():
     offers = [_offer(1316.0, route_name="Londrina → Salvador")]
     history = PriceHistory(previous={"Londrina → Salvador": 1570.0}, min_7d={})
     message = format_whatsapp_message(settings, offers, history)
-    assert "caiu R$ 254 vs ultima" in message
+    assert "-254 vs last" in message
+    assert "caiu R$" not in message
 
 
 def test_format_full_alert_body_range_mode():

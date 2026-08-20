@@ -56,7 +56,7 @@ GET https://serpapi.com/search?engine=google_flights
 
 **Explore mode** (`search_mode: explore` in `travel.yaml`) uses `engine=google_travel_explore` with `month` and `travel_duration`, then optionally `google_flights` on the best dates (`explore.deepen: true`). Horizon ~6 months; roughly doubles API calls when deepening.
 
-**Range mode** (`search_mode: range`) loops `google_flights` once per departure day in the window (max 10 days) per route, ranks the top N cheapest combinations, and shows duration/stops in WhatsApp. Example: 10-day window × 2 routes = 20 calls per run — use `schedule.interval_days` to stay within the free tier.
+**Range mode** (`search_mode: range`) loops `google_flights` once per departure day in the window (max 10 days) per route and ranks the top N cheapest combinations. Duration and stops go in the snapshot; WhatsApp stays a compact summary. Example: 10-day window × 2 routes = 20 calls per run — use `schedule.interval_days` to stay within the free tier.
 
 ### Secondary / “real aviation API”: **Duffel**
 

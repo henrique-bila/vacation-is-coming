@@ -36,7 +36,7 @@ Thin skill adapters (triggers / pointers only): [`skills/`](skills/) — see [`s
 | Search flights | `src/flights/` via SerpAPI (default) or Amadeus BYOK |
 | Date modes | `fixed` (exact dates), `explore` (best week in month), `range` (best days in a window — SerpAPI only) |
 | Price comparison | WhatsApp summary vs last run + 7d min; full table in `config/snapshots/` |
-| WhatsApp alert | CallMeBot (default) or Twilio; range mode uses stacked mobile-friendly layout |
+| WhatsApp alert | CallMeBot (default) or Twilio; compact summary vs last run (all modes) |
 | Price snapshots | `config/snapshots/*.md` (auto-committed by Actions) |
 | Schedule | `schedule` in `config/travel.yaml` → `python -m src --sync-schedule`; optional `interval_days` to skip API calls between runs |
 | Optional price cap | `PRICE_ALERT_MAX` env / Secret |

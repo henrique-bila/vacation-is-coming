@@ -61,94 +61,6 @@ def _format_dates_short(offer: FlightOffer) -> str:
         return _format_dates(offer)
 
 
-def _format_dates_mobile(offer: FlightOffer) -> str:
-    """Compact dd/mm dates for WhatsApp."""
-    try:
-        dep = datetime.strptime(offer.departure_date, "%Y-%m-%d")
-        if offer.return_date:
-            ret = datetime.strptime(offer.return_date, "%Y-%m-%d")
-            return f"{dep.strftime('%d/%m')} -> {ret.strftime('%d/%m')}"
-        return dep.strftime("%d/%m")
-    except ValueError:
-        return _format_dates_short(offer)
-
-
-def _format_money(currency: str, price: float) -> str:
-    whole = int(round(price))
-    if currency == "BRL":
-        return f"R$ {whole:,}".replace(",", ".")
-    return f"{currency} {whole:,}"
-
-
-def _format_stops_label(offer: FlightOffer, *, portuguese: bool = False) -> str:
-    if offer.stops_outbound == 0:
-        return "direto" if portuguese else "nonstop"
-    count = offer.stops_outbound
-    if portuguese:
-        return "1 escala" if count == 1 else f"{count} escalas"
-    return "1 stop" if count == 1 else f"{count} stops"
-
-
-def _format_range_subtitle(settings: Settings) -> str:
-    window = settings.range
-    if window is None:
-        return _search_mode_header(settings)
-    try:
-        start = datetime.strptime(window.departure_window_start, "%Y-%m-%d")
-        end = datetime.strptime(window.departure_window_end, "%Y-%m-%d")
-        window_text = f"{start.strftime('%d/%m')}-{end.strftime('%d/%m')}"
-    except ValueError:
-        window_text = f"{window.departure_window_start} -> {window.departure_window_end}"
-    return (
-        f"Ida {window_text} · {window.trip_duration_days} dias · "
-        f"top {window.top_combinations}"
-    )
-
-
-def _format_range_delta_line(
-    price: float,
-    history: PriceHistory | None,
-    route_name: str,
-) -> str | None:
-    if history is None:
-        return None
-    delta = price_delta(price, history.previous.get(route_name))
-    if delta is None:
-        return None
-    if delta < 0:
-        return f"  caiu R$ {abs(int(round(delta)))} vs ultima"
-    if delta > 0:
-        return f"  subiu R$ {int(round(delta))} vs ultima"
-    return "  igual vs ultima"
-
-
-def _format_range_whatsapp_message(
-    settings: Settings,
-    offers: list[FlightOffer],
-    history: PriceHistory | None = None,
-) -> str:
-    blocks: list[str] = [
-        f"*{settings.message_title}*",
-        _format_range_subtitle(settings),
-    ]
-
-    for route_name, route_offers in _group_offers(offers).items():
-        route_lines = [f"*{route_name}*"]
-        for idx, offer in enumerate(route_offers, start=1):
-            duration = format_duration(offer.duration_outbound)
-            route_lines.append(f"*{idx}.* {_format_money(offer.currency, offer.price)}")
-            route_lines.append(f"   {_format_dates_mobile(offer)}")
-            route_lines.append(
-                f"   {offer.airline} · {_format_stops_label(offer, portuguese=True)} · {duration}"
-            )
-            delta_line = _format_range_delta_line(offer.price, history, route_name)
-            if idx == 1 and delta_line:
-                route_lines.append(delta_line)
-        blocks.append("\n".join(route_lines))
-
-    return "\n\n".join(blocks)
-
-
 def _delta_note(
     price: float,
     history: PriceHistory | None,
@@ -256,9 +168,6 @@ def format_whatsapp_message(
 ) -> str:
     if not offers:
         return f"{settings.message_title}\n\nNo offers found for the configured routes."
-
-    if settings.search_mode == "range":
-        return _format_range_whatsapp_message(settings, offers, history)
 
     grouped = _group_offers(offers)
     best_by_route = {name: route_offers[0] for name, route_offers in grouped.items()}
