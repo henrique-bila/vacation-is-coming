@@ -350,6 +350,15 @@ def should_notify(settings: Settings, offers: list[FlightOffer]) -> bool:
 
 
 def run(dry_run: bool = False, config_path: Path | None = None, *, force: bool = False) -> int:
+    preview = load_settings(config_path, require_routes=False, require_flights=False)
+    if not preview.configured:
+        print(
+            "Skipping search: flight monitoring is not configured. "
+            "Set origin, destinations, and dates in config/travel.yaml, "
+            "then set configured: true."
+        )
+        return 0
+
     settings = load_settings(config_path)
 
     interval_days = settings.schedule.interval_days

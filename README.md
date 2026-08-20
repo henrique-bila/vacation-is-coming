@@ -32,7 +32,7 @@ config/travel.yaml  →  SerpAPI (Google Flights)  →  WhatsApp alert
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USER/vacation-is-coming.git
+git clone https://github.com/henrique-bila/vacation-is-coming.git
 cd vacation-is-coming
 
 python -m venv .venv
@@ -47,8 +47,8 @@ Edit `config/.env` (credentials) and `config/travel.yaml` (routes + schedule). T
 YAML is versioned in your fork; it does not contain secrets.
 
 `config/travel.yaml` starts with `configured: false`, so flight searches cannot
-run accidentally. Replace the starter values with your trip and set
-`configured: true`, or ask an AI agent to do it for you.
+run accidentally — local runs and GitHub Actions **skip with a green status**
+until you set routes and `configured: true` (or ask an AI agent to do it).
 
 ```bash
 # WhatsApp only (no flight search)
@@ -166,7 +166,8 @@ Twilio: set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`, `
 Workflow: [`.github/workflows/check-prices.yml`](.github/workflows/check-prices.yml)
 
 - Runs on a daily cron (synced from `config/travel.yaml` via `--sync-schedule`); respects `schedule.interval_days` (skips SerpAPI on off days)
-- Manual **Run workflow** always searches immediately (`--force`)
+- If `configured: false`, the job **exits 0** (no API calls, no red X on the repo)
+- Manual **Run workflow** always searches immediately (`--force`) once configured
 - Commits each search run's price snapshot to `config/snapshots/`
 
 Repository secrets (`Settings → Secrets and variables → Actions`):

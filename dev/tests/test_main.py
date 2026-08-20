@@ -14,6 +14,7 @@ from src.main import (
     format_full_alert_body,
     format_message,
     format_whatsapp_message,
+    run,
     should_notify,
 )
 from src.schedule import local_to_utc_cron
@@ -188,6 +189,18 @@ def test_default_configuration_blocks_unconfigured_search(tmp_path: Path):
     config.write_text("configured: false\nschedule:\n  timezone: UTC\n  hour: 8\n  minute: 0\nroutes: []\n", encoding="utf-8")
     with pytest.raises(ValueError, match="Flight monitoring is not configured"):
         load_settings(config, require_flights=False)
+
+
+def test_run_skips_unconfigured_search(tmp_path: Path, capsys: pytest.CaptureFixture[str]):
+    config = tmp_path / "travel.yaml"
+    config.write_text(
+        "configured: false\nschedule:\n  timezone: UTC\n  hour: 8\n  minute: 0\nroutes: []\n",
+        encoding="utf-8",
+    )
+    assert run(dry_run=True, config_path=config) == 0
+    captured = capsys.readouterr()
+    assert "Skipping search" in captured.out
+    assert "not configured" in captured.out
 
 
 def test_default_configuration_requires_serpapi_for_search(tmp_path: Path):

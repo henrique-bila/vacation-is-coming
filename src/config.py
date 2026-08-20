@@ -74,6 +74,7 @@ class Settings:
     search_mode: str
     explore: ExploreSettings | None
     range: RangeSettings | None
+    configured: bool = True
 
 
 def _require(name: str, value: str) -> str:
@@ -299,4 +300,5 @@ def load_settings(
         search_mode=search_mode,
         explore=explore,
         range=range,
+        configured=configured,
     )

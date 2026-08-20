@@ -1,4 +1,5 @@
 name: Check flight prices and notify on WhatsApp
+# When config/travel.yaml has configured: false, python -m src exits 0 (skip).
 
 on:
   schedule:
