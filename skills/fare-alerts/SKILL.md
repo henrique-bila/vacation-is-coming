@@ -20,6 +20,6 @@ Thin skill adapter. **Follow [`AGENTS.md`](../../AGENTS.md)** and the playbooks 
 - Before searching, collect missing trip details and set `configured: true`
 - Onboarding: `agents/onboarding.md`
 - Flight monitoring: `agents/monitor-flights.md`
-- Itineraries: phase 2 only — `agents/itineraries.md`
+- Itineraries / hotels: out of scope — `agents/itineraries.md`
 - After schedule edits: `python -m src --sync-schedule`
 - Never commit `config/.env` or API keys

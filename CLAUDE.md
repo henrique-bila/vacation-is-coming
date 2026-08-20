@@ -7,7 +7,7 @@ Playbooks:
 - [`agents/onboarding.md`](agents/onboarding.md)
 - [`agents/monitor-flights.md`](agents/monitor-flights.md)
 - [`agents/git.md`](agents/git.md)
-- [`agents/itineraries.md`](agents/itineraries.md) (phase 2 stub)
+- [`agents/itineraries.md`](agents/itineraries.md) (out of scope)
 
 User guide (Portuguese, full setup from zero): [`docs/GUIA_USUARIO.md`](docs/GUIA_USUARIO.md).
 

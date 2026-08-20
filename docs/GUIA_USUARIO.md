@@ -75,8 +75,6 @@ source .venv/bin/activate
 pip install -r config/requirements.txt
 ```
 
-Para rodar testes, instale também `pytest`.
-
 ---
 
 ## 3. Visão geral: como tudo se conecta

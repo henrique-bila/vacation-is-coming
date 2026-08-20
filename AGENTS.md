@@ -17,7 +17,7 @@ Playbooks:
 - [`agents/onboarding.md`](agents/onboarding.md) — first-time setup
 - [`agents/monitor-flights.md`](agents/monitor-flights.md) — interpret natural language → config
 - [`agents/git.md`](agents/git.md) — commit and push to the user's configured remote
-- [`agents/itineraries.md`](agents/itineraries.md) — phase 2 (not implemented)
+- [`agents/itineraries.md`](agents/itineraries.md) — out of scope (hotels / day-by-day plans)
 
 Thin skill adapters (triggers / pointers only): [`skills/`](skills/) — see [`skills/README.md`](skills/README.md).
 
@@ -27,9 +27,9 @@ Thin skill adapters (triggers / pointers only): [`skills/`](skills/) — see [`s
 2. **Monitoring** — On requests like “check every day at 8am for A, B, C”, update `config/preferences.md` + `config/travel.yaml` + sync the Actions cron. For SerpAPI quota, suggest `schedule.interval_days` (cron stays daily; script skips until elapsed).
 3. **Run** — Suggest `python -m src --dry-run`, `python -m src --test-whatsapp`, `python -m src --force` (local override of interval), or a manual GitHub Actions run (workflow dispatch always uses `--force`).
 4. **Security** — Never commit `config/.env`, CallMeBot keys, or SerpAPI / Amadeus API keys.
-5. **Scope** — v1 is flight search + alerts only. Full day-by-day itineraries (hotels, attractions) are phase 2; say so and stay focused on destinations, dates, and price.
+5. **Scope** — Flight search and alerts only. If asked for hotels, attractions, or a day-by-day itinerary, follow [`agents/itineraries.md`](agents/itineraries.md) and stay on destinations, dates, and price.
 
-## Capabilities (v1)
+## Capabilities
 
 | Capability | How |
 |------------|-----|
